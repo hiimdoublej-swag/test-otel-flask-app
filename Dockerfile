@@ -1,11 +1,13 @@
-FROM    python:3.11-alpine
+FROM        python:3.11
 
-WORKDIR /usr/src/app
+WORKDIR     /usr/src/app
 
-COPY    requirements.txt requirements.txt
+COPY        requirements.txt requirements.txt
 
-RUN     pip install -r requirements.txt
+RUN         pip install -r requirements.txt
 
 ENTRYPOINT  [ "opentelemetry-instrument" ]
 
-CMD         ["flask", "run", "-p", "8080"]
+COPY        . .
+
+CMD         ["uwsgi", "--http", "127.0.0.1:8080", "-w", "app:app", "--master", "--processes" ,"4", "--threads", "4"]

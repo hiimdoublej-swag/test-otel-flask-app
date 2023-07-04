@@ -24,9 +24,10 @@ def roll_dice():
 
 
 def do_roll():
-    with tracer.start_as_current_span('do_roll') as rollspan:
-        res = randint(1, 6)
-        rollspan.set_attribute('roll.value', res)
-        # This adds 1 to the counter for the given roll value
-        roll_counter.add(1, {'roll.value': res})
-        return res
+    with tracer.start_as_current_span('do_roll_outer'):
+        with tracer.start_as_current_span('do_roll') as rollspan:
+            res = randint(1, 100000)
+            rollspan.set_attribute('roll.value', res)
+            # This adds 1 to the counter for the given roll value
+            roll_counter.add(1, {'roll.value': res})
+            return res
